@@ -33,17 +33,19 @@ class Ptt:
         """
         self.send_no_newline(cmd + '\r\n')
 
-    def send_combo(self, cmd_list):
+    def send_combo(self, cmd_list, wait=.7):
         """Send a list of commands. The command starts with '~' would send without new
         line.
 
         Args:
             cmd_list: A list of commands.
+            wait: How many seconds to wait before read data from socket. The default is
+                  0.7 second.
 
         Returns:
             None.
         """
-        old_screen = self.read()
+        old_screen = self.read(wait=0)
         for cmd in cmd_list:
             if cmd.startswith('~'):
                 self.send_no_newline(cmd[1:])
@@ -51,25 +53,27 @@ class Ptt:
                 self.send(cmd)
 
             # Wait for screen change
-            new_screen = self.read()
+            new_screen = self.read(wait=wait)
             while new_screen == old_screen:
                 #print self.pure_text(new_screen)
-                new_screen = self.read()
+                new_screen = self.read(wait=wait)
             old_screen = new_screen
 
-    def read(self):
+    def read(self, wait=.7):
         """Read screen.
 
         Args:
-            None.
+            wait: How many seconds to wait before read data from socket. The default is
+                  0.7 second.
 
         Returns:
             Screen.
         """
-        sleep(1)
+        sleep(wait)
         screen = self.tn.read_very_eager().decode('big5','ignore')
         if (len(screen) > 0):
             self.buf = screen
+            #print self.pure_text(self.buf)
         return self.buf
 
     def pure_text(self, screen):

@@ -106,8 +106,8 @@ if __name__ == '__main__':
             for user in users[ max_list_len*i : max_list_len*(i+1) ]:
                 msg = 'Adding %s...' % user
                 print msg,
-                ptt.send_combo(['a', user])
-                if u'描述一下' in ptt.read():
+                ptt.send_combo(['a', user], wait=.3)
+                if u'描述一下' in ptt.read(wait=0):
                     ptt.send('')
                 print 'done'
 
